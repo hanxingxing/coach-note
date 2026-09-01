@@ -2,8 +2,11 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const base = '/coach-note/'
+
 // https://vitejs.dev/config/
 export default defineConfig({
+  base,
   plugins: [
     vue(),
     // PWA 配置：应用名称「课记CoachNote」，standalone 全屏展示（iPhone 添加主屏幕后隐藏地址栏）
@@ -17,14 +20,14 @@ export default defineConfig({
         lang: 'zh-CN',
         display: 'standalone', // 全屏展示，隐藏浏览器地址栏
         orientation: 'portrait',
-        start_url: './',
-        scope: './',
+        start_url: base,
+        scope: base,
         theme_color: '#409eff',
         background_color: '#ffffff',
         icons: [
-          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+          { src: `${base}icons/icon-192.png`, sizes: '192x192', type: 'image/png' },
+          { src: `${base}icons/icon-512.png`, sizes: '512x512', type: 'image/png' },
+          { src: `${base}icons/icon-maskable-512.png`, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ]
       },
       workbox: {
