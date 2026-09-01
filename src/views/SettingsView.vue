@@ -38,21 +38,6 @@
       </div>
     </div>
 
-    <!-- ========== 数据容量 ========== -->
-    <div class="cn-card">
-      <h3 class="cn-card-title">
-        <el-icon color="var(--cn-info)"><Coin /></el-icon>
-        数据容量
-      </h3>
-      <div class="setting-row">
-        <div class="s-label">IndexedDB 已用空间</div>
-        <span class="storage-value">{{ storageUsage }}</span>
-      </div>
-      <div class="reminder-hint">
-        数据保存在本机浏览器中，建议定期「导出 JSON」备份，防止误清缓存导致数据丢失。
-      </div>
-    </div>
-
     <!-- ========== 数据管理 ========== -->
     <div class="cn-card">
       <h3 class="cn-card-title">
@@ -119,29 +104,12 @@ const fileInput = ref(null)
 // 提醒开关状态
 const reminderEnabled = ref(settings.value.reminderEnabled)
 
-// 数据库容量显示
-const storageUsage = ref('计算中…')
-
 /** 字节数格式化为可读大小 */
 function formatBytes(bytes) {
   if (bytes == null || Number.isNaN(bytes)) return '未知'
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`
-}
-
-/** 查询 IndexedDB 当前占用空间 */
-async function loadStorageUsage() {
-  if (!navigator.storage || !navigator.storage.estimate) {
-    storageUsage.value = '当前浏览器不支持查询'
-    return
-  }
-  try {
-    const est = await navigator.storage.estimate()
-    storageUsage.value = formatBytes(est.usage)
-  } catch {
-    storageUsage.value = '查询失败'
-  }
 }
 
 const permissionTag = computed(() => {
@@ -157,7 +125,6 @@ const permissionTag = computed(() => {
 onMounted(async () => {
   await loadSettings()
   reminderEnabled.value = settings.value.reminderEnabled
-  loadStorageUsage()
 })
 
 /** 请求通知授权（需用户点击触发） */
