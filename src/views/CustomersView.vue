@@ -2,7 +2,7 @@
   <div>
     <!-- 搜索 + 新增 -->
     <div class="toolbar">
-      <el-input v-model="keyword" placeholder="搜索姓名 / 电话" clearable style="flex: 1">
+      <el-input v-model="keyword" placeholder="搜索姓名" clearable style="flex: 1">
         <template #prefix>
           <el-icon><Search /></el-icon>
         </template>
@@ -26,20 +26,17 @@
               剩余 {{ c.remainingLessons }} 节
             </span>
           </div>
-          <div class="c-row2">
-            <el-icon style="margin-right: 2px"><Iphone /></el-icon>
-            {{ c.phone || '未填写电话' }}
-          </div>
           <div v-if="c.note" class="c-row3">{{ c.note }}</div>
         </div>
+        <!-- 三个操作按钮：放大点击区域 -->
         <div class="c-actions">
-          <el-button size="small" text type="primary" @click="viewSessions(c)">
+          <el-button text type="primary" circle title="查看全部排课" @click="viewSessions(c)">
             <el-icon><Calendar /></el-icon>
           </el-button>
-          <el-button size="small" text type="primary" @click="openEdit(c)">
+          <el-button text type="primary" circle title="编辑客户" @click="openEdit(c)">
             <el-icon><Edit /></el-icon>
           </el-button>
-          <el-button size="small" text type="danger" @click="openDelete(c)">
+          <el-button text type="danger" circle title="删除客户" @click="openDelete(c)">
             <el-icon><Delete /></el-icon>
           </el-button>
         </div>
@@ -98,9 +95,7 @@ const pendingDelete = ref(null)
 const filtered = computed(() => {
   const kw = keyword.value.trim().toLowerCase()
   if (!kw) return customers.value
-  return customers.value.filter(
-    (c) => c.name.toLowerCase().includes(kw) || (c.phone || '').includes(kw)
-  )
+  return customers.value.filter((c) => c.name.toLowerCase().includes(kw))
 })
 
 function openCreate() {
@@ -151,21 +146,21 @@ function viewSessions(c) {
 .customer-card {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   background: var(--cn-card-bg);
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   margin-bottom: 10px;
   box-shadow: var(--cn-shadow);
   min-width: 0;
 }
 .avatar {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: linear-gradient(135deg, #ff9ec4, #a78bfa);
   color: #fff;
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -179,20 +174,20 @@ function viewSessions(c) {
 .c-row1 {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
   min-width: 0;
 }
 .c-name {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
   color: var(--cn-text);
 }
 .c-gender {
-  font-size: 11px;
-  line-height: 16px;
-  padding: 0 6px;
-  border-radius: 8px;
+  font-size: 12px;
+  line-height: 18px;
+  padding: 0 8px;
+  border-radius: 9px;
   flex-shrink: 0;
 }
 .c-gender.male {
@@ -204,35 +199,38 @@ function viewSessions(c) {
   background: #ffeaf2;
 }
 .c-lessons {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--cn-success);
   background: #e7f9ef;
-  padding: 1px 8px;
-  border-radius: 10px;
+  padding: 2px 10px;
+  border-radius: 11px;
   flex-shrink: 0;
 }
 .c-lessons.zero {
   color: var(--cn-danger);
   background: #ffecec;
 }
-.c-row2 {
-  font-size: 12px;
-  color: var(--cn-text-hint);
-  margin-top: 3px;
-  display: flex;
-  align-items: center;
-}
 .c-row3 {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--cn-text-secondary);
-  margin-top: 3px;
+  margin-top: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* 三个操作按钮：放大尺寸，保证移动端点击区域 */
 .c-actions {
   display: flex;
+  gap: 2px;
   flex-shrink: 0;
+}
+.c-actions .el-button {
+  min-width: 46px;
+  min-height: 46px;
+  padding: 0;
+}
+.c-actions .el-icon {
+  font-size: 22px;
 }
 /* 删除确认对话框 */
 .del-tip {

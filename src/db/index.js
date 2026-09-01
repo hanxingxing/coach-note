@@ -5,8 +5,9 @@ import Dexie from 'dexie'
  *
  * 表结构：
  * - customers: 客户
- *   id: 自增主键, name: 姓名, phone: 联系电话, gender: 性别（男/女，可空）,
+ *   id: 自增主键, name: 姓名, gender: 性别（男/女）,
  *   note: 备注, remainingLessons: 剩余课时（节）, createdAt: 创建时间戳
+ *   （联系电话 phone 字段已移除）
  * - sessions: 排课
  *   id: 自增主键, customerId: 关联客户 id, start: 开始时间戳(ms),
  *   end: 结束时间戳(ms), note: 上课小结备注,

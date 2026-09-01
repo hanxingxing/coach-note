@@ -7,9 +7,13 @@
           <el-icon><Calendar /></el-icon>
         </div>
         <div class="today-info">
-          <div class="num">{{ todayCount }}</div>
-          <div class="label">今日排课（节）</div>
+          <div class="today-label">今日排课</div>
           <div class="today-sub">{{ todayPending }} 节待上课 · {{ todayCompleted }} 节已完成</div>
+        </div>
+        <!-- 右侧放大节数，填充右侧空白 -->
+        <div class="today-count">
+          <span class="num">{{ todayCount }}</span>
+          <span class="unit">节</span>
         </div>
       </div>
     </div>
@@ -59,7 +63,7 @@
         <div
           v-for="s in todaySessions"
           :key="s.id"
-          class="record-item"
+          class="record-item today-session"
           @click="openEditSession(s)"
         >
           <div class="time-col">
@@ -73,6 +77,27 @@
             </div>
             <div class="row2">{{ s.note }}</div>
           </div>
+          <!-- 上课 / 快捷下课（逻辑、特效、剪贴板与日视图完全一致） -->
+          <div v-if="s.status === 'pending'" class="today-actions" @click.stop>
+            <el-button
+              class="quick-btn start-btn"
+              size="small"
+              circle
+              title="上课（复制到店通知）"
+              @click="onQuickStart(s)"
+            >
+              <el-icon><VideoPlay /></el-icon>
+            </el-button>
+            <el-button
+              class="quick-btn finish-btn"
+              size="small"
+              circle
+              title="快捷下课（标记已完成并扣减 1 节课时）"
+              @click="onQuickComplete(s)"
+            >
+              <el-icon><Check /></el-icon>
+            </el-button>
+          </div>
         </div>
       </template>
       <div v-else class="empty-hint">今天暂无排课，点击上方「新建排课」安排一节吧</div>
@@ -82,6 +107,10 @@
     <SessionFormDialog v-model="sessionDialogVisible" :session="editingSession" @saved="onSessionSaved" />
     <!-- 客户弹窗 -->
     <CustomerFormDialog v-model="customerDialogVisible" :customer="editingCustomer" @saved="onCustomerSaved" />
+
+    <!-- 上课 / 下课庆祝弹窗（与日视图共用实例状态） -->
+    <CelebrationLayer :visible="startCelebration" :confetti="startConfetti" text="开始上课啦，加油章章" />
+    <CelebrationLayer :visible="completeCelebration" :confetti="completeConfetti" text="辛苦了，章章" />
   </div>
 </template>
 
@@ -92,6 +121,8 @@ import { useCustomers } from '../composables/useCustomers'
 import { useSessions } from '../composables/useSessions'
 import SessionFormDialog from '../components/SessionFormDialog.vue'
 import CustomerFormDialog from '../components/CustomerFormDialog.vue'
+import CelebrationLayer from '../components/CelebrationLayer.vue'
+import { useClassActions } from '../composables/useClassActions'
 import { fmtTime, sameDay } from '../utils/time'
 
 /**
@@ -116,6 +147,16 @@ function goCustomers() {
 
 const { customers, getById: getCustomer } = useCustomers()
 const { sessions, refresh: refreshSessions } = useSessions()
+
+// 上课/下课共享操作与庆祝特效（与排课日视图完全一致）
+const {
+  startCelebration,
+  startConfetti,
+  completeCelebration,
+  completeConfetti,
+  onQuickStart,
+  onQuickComplete
+} = useClassActions()
 
 const completedCount = computed(() => sessions.value.filter((s) => s.status === 'completed').length)
 const customerCount = computed(() => customers.value.length)
@@ -187,11 +228,26 @@ function onCustomerSaved() {
 .record-item {
   cursor: pointer;
 }
-/* 今日排课卡片：跨整行、放大加粗数字、多巴胺粉紫渐变底，重点展示 */
+/* 今日排课条目：上课/下课按钮（视觉样式统一在全局 .quick-btn） */
+.today-session {
+  align-items: center;
+}
+.today-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.today-actions .quick-btn {
+  width: auto;
+}
+.today-actions .quick-btn:active {
+  transform: scale(0.94);
+}
+/* 今日排课卡片：跨整行、左右分布布局，右侧放大加粗节数填充空白 */
 .today-card {
   grid-column: 1 / -1;
   background: linear-gradient(135deg, #fff0f6, #f5ecff);
-  padding: 16px;
+  padding: 18px 20px;
 }
 .today-card .icon {
   width: 48px;
@@ -199,19 +255,39 @@ function onCustomerSaved() {
   border-radius: 14px;
   font-size: 24px;
 }
-.today-card .num {
-  font-size: 40px;
-  font-weight: 800;
+.today-info {
+  flex: 1;
+  min-width: 0;
 }
-.today-card .label {
-  font-size: 13px;
-  font-weight: 600;
+.today-label {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--cn-text);
 }
 .today-sub {
   font-size: 13px;
   font-weight: 500;
   color: var(--cn-text-secondary);
   margin-top: 4px;
+}
+/* 右侧大数字：放大字号、加重权重 */
+.today-count {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.today-count .num {
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--cn-text);
+}
+.today-count .unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cn-text-hint);
 }
 /* 已上课 / 待上课 / 客户总数：三卡并排一行，数字放大加粗 */
 .stat-card.mini {

@@ -41,7 +41,6 @@ export function sessionToVevent(session, customer) {
   const summary = `[课记] ${customer ? customer.name : '未知客户'}`
   const description = [
     `客户：${customer ? customer.name : ''}`,
-    `电话：${customer ? customer.phone || '-' : '-'}`,
     `备注：${session.note || ''}`,
     `状态：${({ pending: '待上课', completed: '已完成' })[session.status] || ''}`
   ]

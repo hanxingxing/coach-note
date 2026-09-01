@@ -37,11 +37,21 @@
       >
         <div class="sb-time">{{ fmtTime(s.start) }} - {{ fmtTime(s.end) }}</div>
         <div class="sb-name">{{ customerName(s.customerId) }}</div>
+        <!-- 快捷上课：复制「已到店」通知文本，配合提示与庆祝特效 -->
+        <el-button
+          v-if="s.status === 'pending'"
+          class="quick-btn start-btn"
+          size="small"
+          circle
+          title="上课（复制到店通知）"
+          @click.stop="emit('start', s)"
+        >
+          <el-icon><VideoPlay /></el-icon>
+        </el-button>
         <!-- 快捷下课：直接标记「已完成」并扣减 1 节课时，无需打开详情弹窗 -->
         <el-button
           v-if="s.status === 'pending'"
-          class="finish-btn"
-          type="success"
+          class="quick-btn finish-btn"
           size="small"
           circle
           title="快捷下课（标记已完成并扣减 1 节课时）"
@@ -75,7 +85,7 @@ const props = defineProps({
   workStart: { type: Number, default: 9 },
   workEnd: { type: Number, default: 22 }
 })
-const emit = defineEmits(['edit', 'add-at', 'complete'])
+const emit = defineEmits(['edit', 'add-at', 'complete', 'start'])
 
 const { getById: getCustomer } = useCustomers()
 
@@ -183,7 +193,7 @@ function onTimelineClick(e) {
   left: 8px;
   right: 8px;
   border-radius: 10px;
-  padding: 6px 54px 6px 10px;
+  padding: 6px 96px 6px 10px;
   overflow: hidden;
   cursor: pointer;
   z-index: 2;
@@ -211,26 +221,21 @@ function onTimelineClick(e) {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* 快捷下课按钮：最右侧、垂直居中、大尺寸易点击，醒目但不突兀 */
-.session-block .finish-btn {
+/* 快捷上课/下课按钮：右侧并排、垂直居中（视觉样式统一在全局 .quick-btn） */
+.session-block .quick-btn {
   position: absolute;
-  right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  width: 36px;
-  height: 36px;
-  padding: 0;
   z-index: 3;
-  background: linear-gradient(135deg, #4ade80, #2fb963);
-  border: 2px solid #fff;
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(47, 185, 99, 0.45);
+  width: auto;
 }
-.session-block .finish-btn:active {
+.session-block .quick-btn:active {
   transform: translateY(-50%) scale(0.94);
 }
-.session-block .finish-btn .el-icon {
-  font-size: 18px;
-  font-weight: 700;
+.session-block .start-btn {
+  right: 50px;
+}
+.session-block .finish-btn {
+  right: 10px;
 }
 </style>

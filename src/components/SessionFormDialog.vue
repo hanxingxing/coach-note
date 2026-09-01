@@ -7,9 +7,9 @@
     append-to-body
   >
     <el-form label-position="top" size="large">
-      <!-- 客户 + 排课状态：并列一行，精简页面 -->
-      <div class="form-row">
-        <el-form-item label="客户" required style="flex: 1.6; min-width: 0">
+      <!-- 客户 + 排课状态：新增模式分行展示（放大客户区域）；编辑模式保持并列 -->
+      <div class="form-row" :class="{ stacked: !isEdit }">
+        <el-form-item label="客户" required :style="isEdit ? 'flex: 1.6; min-width: 0' : ''">
           <!-- 新增排课：客户标签展示全部客户 -->
           <template v-if="showAllCustomerTags">
             <div v-if="customers.length" class="customer-tags">
@@ -38,8 +38,8 @@
             </div>
           </template>
         </el-form-item>
-        <el-form-item label="排课状态" style="flex: 1; min-width: 0">
-          <el-radio-group v-model="form.status" class="status-group">
+        <el-form-item label="排课状态" :style="isEdit ? 'flex: 1; min-width: 0' : ''">
+          <el-radio-group v-model="form.status" class="status-group" :style="!isEdit && 'flex-direction: row'">
             <el-radio-button value="pending">待上课</el-radio-button>
             <el-radio-button value="completed">已完成</el-radio-button>
           </el-radio-group>
@@ -67,7 +67,6 @@
           />
         </el-form-item>
       </div>
-      <div class="time-hint">每节固定 60 分钟 · 上课时间限定 09:00 - 22:00，结束时间不能超过 22:00</div>
 
       <!-- 课时扣减提示 -->
       <div v-if="form.status === 'completed'" class="status-hint">
@@ -162,7 +161,7 @@ const emit = defineEmits(['update:modelValue', 'saved'])
 
 const router = useRouter()
 
-const { customers, getById: getCustomer } = useCustomers()
+const { customers, getById: getCustomer, updateCustomer } = useCustomers()
 const { saveSession, deleteSession } = useSessions()
 
 const visible = ref(false)
@@ -250,6 +249,21 @@ watch(
 )
 watch(visible, (v) => emit('update:modelValue', v))
 
+/**
+ * 新建排课默认开始时间：当前时间往后最近的半小时整点（如 14:37 → 15:00，14:12 → 14:30）
+ * 恰好整点则顺延半小时；超出可排课范围 [09:00, 21:30] 时回退到 09:00
+ */
+function nextHalfHour() {
+  const d = new Date()
+  let next = Math.ceil((d.getHours() * 60 + d.getMinutes()) / 30) * 30
+  if (next === d.getHours() * 60 + d.getMinutes()) next += 30
+  if (next < 9 * 60) next = 9 * 60
+  if (next > 21 * 60 + 30) next = 9 * 60
+  const h = Math.floor(next / 60)
+  const m = next % 60
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+}
+
 /** 初始化表单：编辑模式取排课数据，否则取预填参数（每节固定 60 分钟） */
 function initForm() {
   if (props.session) {
@@ -263,7 +277,7 @@ function initForm() {
     isEdit.value = false
     form.customerId = props.preset?.customerId ?? null
     form.date = props.preset?.start ? startOfDay(props.preset.start) : startOfDay(Date.now())
-    form.startTime = props.preset?.start ? fmtTime(props.preset.start) : '10:00'
+    form.startTime = props.preset?.start ? fmtTime(props.preset.start) : nextHalfHour()
     form.status = 'pending'
     form.note = ''
   }
@@ -297,6 +311,28 @@ async function onSave() {
   if (startM < WORK_START_MINUTES || endM > WORK_END_MINUTES) {
     ElMessage.warning('上课时间需在 09:00 - 22:00 之间，且结束时间不能超过 22:00')
     return
+  }
+
+  // 新建排课校验：客户剩余课时为 0 时弹出确认弹窗提示是否续课
+  // 同意 → 客户课时自动 +1；取消 → 不做修改，继续保存排课
+  if (!isEdit.value && customerRemaining.value <= 0 && currentCustomer.value) {
+    try {
+      await ElMessageBox.confirm(
+        `客户「${currentCustomer.value.name}」剩余课时为 0，是否续课 1 节？`,
+        '续课提示',
+        {
+          type: 'warning',
+          confirmButtonText: '续课 +1',
+          cancelButtonText: '暂不续课'
+        }
+      )
+      await updateCustomer(currentCustomer.value.id, {
+        ...currentCustomer.value,
+        remainingLessons: currentCustomer.value.remainingLessons + 1
+      })
+    } catch {
+      // 用户取消续课：不做修改，继续保存
+    }
   }
 
   saving.value = true
@@ -364,6 +400,17 @@ function onExportIcs() {
 .form-row {
   display: flex;
   gap: 10px;
+}
+/* 新建排课：客户与状态分行展示，放大客户标签区域，保证点击空间 */
+.form-row.stacked {
+  flex-direction: column;
+}
+.form-row.stacked .el-form-item {
+  width: 100%;
+}
+.form-row.stacked .ctag {
+  padding: 10px 18px;
+  font-size: 15px;
 }
 .time-hint {
   font-size: 12px;
@@ -446,6 +493,7 @@ function onExportIcs() {
   cursor: pointer;
   user-select: none;
   transition: all 0.15s ease;
+  line-height: 30px;
 }
 .note-tag.active {
   background: var(--cn-primary);

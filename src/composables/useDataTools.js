@@ -59,17 +59,18 @@ export function useDataTools() {
       return { ok: false, customers: 0, sessions: 0, error: '文件缺少 customers / sessions 数据' }
     }
 
-    // 数据清洗：只保留合法字段，避免脏数据（「取消」状态已移除，导入时跳过 cancelled 记录）
-    const cleanCustomers = data.customers
-      .filter((c) => c && typeof c.name === 'string')
-      .map((c) => ({
-        name: c.name,
-        phone: c.phone || '',
-        gender: c.gender || '',
-        note: c.note || '',
-        remainingLessons: Number(c.remainingLessons) || 0,
-        createdAt: Number(c.createdAt) || Date.now()
-      }))
+    // 数据清洗：只保留合法字段，避免脏数据
+    // （「取消」状态已移除，导入时跳过 cancelled 记录；手机号字段已删除，不再导入）
+    const rawCustomers = data.customers.filter((c) => c && typeof c.name === 'string')
+    // 原客户 id（与 rawCustomers 顺序一致），用于重建「排课-客户」关联
+    const oldCustomerIds = rawCustomers.map((c) => Number(c.id))
+    const cleanCustomers = rawCustomers.map((c) => ({
+      name: c.name,
+      gender: c.gender || '',
+      note: c.note || '',
+      remainingLessons: Number(c.remainingLessons) || 0,
+      createdAt: Number(c.createdAt) || Date.now()
+    }))
     const cleanSessions = data.sessions
       .filter(
         (s) =>
@@ -79,7 +80,7 @@ export function useDataTools() {
           s.status !== 'cancelled' // 已取消的排课不再导入
       )
       .map((s) => ({
-        customerId: s.customerId,
+        customerId: Number(s.customerId),
         start: Number(s.start),
         end: Number(s.end) || Number(s.start) + 3600000,
         note: s.note || '',
@@ -87,13 +88,31 @@ export function useDataTools() {
         createdAt: Number(s.createdAt) || Date.now()
       }))
 
-    // 覆盖式导入（清空旧数据后写入）
+    // 覆盖式导入（清空旧数据后写入，并重建排课与客户的关联）
     await db.transaction('rw', db.customers, db.sessions, db.settings, async () => {
       await db.customers.clear()
       await db.sessions.clear()
       await db.settings.clear()
-      if (cleanCustomers.length) await db.customers.bulkAdd(cleanCustomers)
-      if (cleanSessions.length) await db.sessions.bulkAdd(cleanSessions)
+
+      // 1) 写入客户：autoIncrement 表会重新分配 id，记录 旧id → 新id 映射
+      //    （修复跨设备导入后排课与客户匹配错乱、出现「未知客户」的问题）
+      const oldToNew = new Map()
+      if (cleanCustomers.length) {
+        const newKeys = await db.customers.bulkAdd(cleanCustomers, { allKeys: true })
+        oldCustomerIds.forEach((oldId, i) => {
+          if (oldId != null && !Number.isNaN(oldId) && newKeys[i] != null) {
+            oldToNew.set(oldId, newKeys[i])
+          }
+        })
+      }
+
+      // 2) 写入排课：customerId 通过映射重绑定到新客户 id
+      const boundSessions = cleanSessions.map((s) => ({
+        ...s,
+        customerId: oldToNew.has(s.customerId) ? oldToNew.get(s.customerId) : s.customerId
+      }))
+      if (boundSessions.length) await db.sessions.bulkAdd(boundSessions)
+
       if (Array.isArray(data.settings)) {
         const cleanSettings = data.settings.filter((s) => s && s.key)
         if (cleanSettings.length) await db.settings.bulkAdd(cleanSettings)

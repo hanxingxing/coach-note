@@ -10,9 +10,6 @@
       <el-form-item label="姓名" required>
         <el-input v-model="form.name" placeholder="客户姓名" maxlength="20" />
       </el-form-item>
-      <el-form-item label="联系电话">
-        <el-input v-model="form.phone" placeholder="手机号（选填）" maxlength="20" />
-      </el-form-item>
       <el-form-item label="性别">
         <el-radio-group v-model="genderRadio">
           <el-radio-button value="male">男</el-radio-button>
@@ -53,7 +50,7 @@ const saving = ref(false)
 const isEdit = ref(false)
 /** 性别单选：male=男 / female=女（仅两个可选项） */
 const genderRadio = ref('male')
-const form = reactive({ name: '', phone: '', remainingLessons: 0, note: '' })
+const form = reactive({ name: '', gender: '', remainingLessons: 0, note: '' })
 
 /** 性别中文 → 单选值 */
 function genderToRadio(gender) {
@@ -84,12 +81,10 @@ function initForm() {
   genderRadio.value = props.customer ? genderToRadio(props.customer.gender) : 'male'
   if (props.customer) {
     form.name = props.customer.name || ''
-    form.phone = props.customer.phone || ''
     form.remainingLessons = props.customer.remainingLessons || 0
     form.note = props.customer.note || ''
   } else {
     form.name = ''
-    form.phone = ''
     form.remainingLessons = 0
     form.note = ''
   }

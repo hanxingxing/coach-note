@@ -9,10 +9,10 @@
     <!-- 月视图 -->
     <div v-if="viewMode === 'month'" class="cal-panel">
       <div class="nav-row">
-        <el-button circle size="small" :icon="ArrowLeft" @click="shiftMonth(-1)" />
+        <el-button class="nav-btn" circle :icon="ArrowLeft" @click="shiftMonth(-1)" />
         <div class="nav-title" @click="goToday">{{ year }}年{{ month }}月</div>
-        <el-button circle size="small" :icon="ArrowRight" @click="shiftMonth(1)" />
-        <el-button size="small" text @click="goToday">今天</el-button>
+        <el-button class="nav-btn" circle :icon="ArrowRight" @click="shiftMonth(1)" />
+        <el-button class="today-btn" text @click="goToday">今天</el-button>
       </div>
       <MonthCalendar
         :year="year"
@@ -26,9 +26,9 @@
     <!-- 日视图 -->
     <div v-if="viewMode === 'day'" class="cal-panel">
       <div class="nav-row">
-        <el-button circle size="small" :icon="ArrowLeft" @click="shiftDay(-1)" />
+        <el-button class="nav-btn" circle :icon="ArrowLeft" @click="shiftDay(-1)" />
         <div class="nav-title" @click="goToday">{{ fmtDate(selectedDay) }} {{ fmtWeekday(selectedDay) }}</div>
-        <el-button circle size="small" :icon="ArrowRight" @click="shiftDay(1)" />
+        <el-button class="nav-btn" circle :icon="ArrowRight" @click="shiftDay(1)" />
       </div>
       <DayCalendar
         :date-ts="selectedDay"
@@ -38,6 +38,7 @@
         @edit="openEdit"
         @add-at="openCreateAt"
         @complete="onQuickComplete"
+        @start="onQuickStart"
       />
     </div>
 
@@ -60,32 +61,33 @@
       @saved="onSaved"
     />
 
-    <!-- 快捷下课庆祝特效（Teleport 到 body，避免任何祖先容器/层级影响，确保始终可见） -->
-    <Teleport to="body">
-      <div v-if="celebration" class="celebration-layer">
-        <span
-          v-for="c in confetti"
-          :key="c.id"
-          class="celebration-emoji"
-          :style="{ left: c.left, animationDelay: c.delay + 's', fontSize: c.size + 'px' }"
-        >{{ c.emoji }}</span>
-        <div class="celebration-text">辛苦了！</div>
-      </div>
-    </Teleport>
+    <!-- 上课庆祝弹窗（独立实例，文案：开始上课啦，加油章章） -->
+    <CelebrationLayer
+      :visible="startCelebration"
+      :confetti="startConfetti"
+      text="开始上课啦，加油章章"
+    />
+    <!-- 下课庆祝弹窗（独立实例，文案：辛苦了章章） -->
+    <CelebrationLayer
+      :visible="completeCelebration"
+      :confetti="completeConfetti"
+      text="辛苦了，章章"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { Plus, ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 import MonthCalendar from '../components/MonthCalendar.vue'
 import DayCalendar from '../components/DayCalendar.vue'
 import SessionList from '../components/SessionList.vue'
 import SessionFormDialog from '../components/SessionFormDialog.vue'
+import CelebrationLayer from '../components/CelebrationLayer.vue'
 import { useCustomers } from '../composables/useCustomers'
 import { useSessions } from '../composables/useSessions'
+import { useClassActions } from '../composables/useClassActions'
 import { startOfDay, addDays, fmtDate, fmtWeekday } from '../utils/time'
 
 /**
@@ -98,7 +100,16 @@ import { startOfDay, addDays, fmtDate, fmtWeekday } from '../utils/time'
 const route = useRoute()
 
 const { customers } = useCustomers()
-const { sessions, completeSession } = useSessions()
+const { sessions } = useSessions()
+// 上课/下课共享操作与庆祝特效（与首页今日排课列表共用）
+const {
+  startCelebration,
+  startConfetti,
+  completeCelebration,
+  completeConfetti,
+  onQuickStart,
+  onQuickComplete
+} = useClassActions()
 
 const viewOptions = [
   { label: '月', value: 'month' },
@@ -171,43 +182,6 @@ function openEdit(s) {
   dialogVisible.value = true
 }
 
-/** 快捷下课（日视图按钮）：直接标记已完成并扣减 1 节课时，成功后提示「辛苦了」并触发庆祝特效 */
-async function onQuickComplete(s) {
-  const result = await completeSession(s.id)
-  if (result.ok) {
-    ElMessage.success('辛苦啦章鱼妹')
-    celebrate()
-  } else {
-    ElMessage.warning(result.error)
-  }
-}
-
-// ---------- 庆祝特效 ----------
-const celebration = ref(false)
-const confetti = ref([])
-let confettiId = 0
-let celebrationTimer = null
-const CELEBRATION_EMOJIS = ['🎉', '💪', '✨', '🌟', '🎊', '🔥', '❤️', '🏆']
-
-/** 触发一次彩带动画：随机 emoji 以屏幕中心为基准向两侧散开上浮 */
-function celebrate() {
-  // 防止连续点击叠加动画
-  if (celebration.value) return
-  confetti.value = Array.from({ length: 12 }, () => ({
-    id: confettiId++,
-    emoji: CELEBRATION_EMOJIS[Math.floor(Math.random() * CELEBRATION_EMOJIS.length)],
-    left: `calc(50% + ${Math.round((Math.random() - 0.5) * 300)}px)`,
-    delay: Math.random() * 0.15,
-    size: 18 + Math.round(Math.random() * 16)
-  }))
-  celebration.value = true
-  clearTimeout(celebrationTimer)
-  celebrationTimer = setTimeout(() => {
-    celebration.value = false
-    confetti.value = []
-  }, 1800)
-}
-
 function onSaved() {
   // 数据在 composable 内已刷新；无需额外处理
 }
@@ -233,11 +207,22 @@ function onSaved() {
 .cal-panel {
   margin-bottom: 4px;
 }
+/* 导航行：与日历主体拉开上下间距 */
 .nav-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 14px;
+}
+/* 上/下月（上/下一天）切换按钮：放大尺寸，增大移动端点击热区 */
+.nav-btn {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+.today-btn {
+  font-size: 14px;
+  padding: 8px 12px;
 }
 .nav-title {
   flex: 1;

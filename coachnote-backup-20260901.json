@@ -1,0 +1,244 @@
+{
+  "app": "课记CoachNote",
+  "version": 1,
+  "exportedAt": "2026-09-01T12:38:53.139Z",
+  "customers": [
+    {
+      "name": "赵晨",
+      "phone": "",
+      "remainingLessons": 8,
+      "note": "",
+      "gender": "男",
+      "createdAt": 1788252202162,
+      "id": 1
+    },
+    {
+      "name": "侯欣妍",
+      "phone": "",
+      "remainingLessons": 29,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788252211646,
+      "id": 2
+    },
+    {
+      "name": "马源",
+      "phone": "",
+      "remainingLessons": 57,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788258020286,
+      "id": 3
+    },
+    {
+      "name": "朱卓婧",
+      "phone": "",
+      "remainingLessons": 0,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788258134140,
+      "id": 4
+    },
+    {
+      "name": "常悦庭",
+      "phone": "",
+      "remainingLessons": 114,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788258168095,
+      "id": 5
+    },
+    {
+      "name": "曹义敏",
+      "phone": "",
+      "remainingLessons": 13,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788258430847,
+      "id": 6
+    },
+    {
+      "name": "田正伟",
+      "phone": "",
+      "remainingLessons": 4,
+      "note": "",
+      "gender": "男",
+      "createdAt": 1788258470100,
+      "id": 7
+    },
+    {
+      "name": "贠汶",
+      "phone": "",
+      "remainingLessons": 6,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788258507049,
+      "id": 8
+    },
+    {
+      "name": "范维静",
+      "phone": "",
+      "remainingLessons": 29,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788258533282,
+      "id": 9
+    },
+    {
+      "name": "熊冰冰",
+      "phone": "",
+      "remainingLessons": 18,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788259327587,
+      "id": 10
+    },
+    {
+      "name": "张锦凤",
+      "phone": "",
+      "remainingLessons": 60,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788259532753,
+      "id": 11
+    },
+    {
+      "name": "周志清",
+      "phone": "",
+      "remainingLessons": 33,
+      "note": "",
+      "gender": "男",
+      "createdAt": 1788259559006,
+      "id": 12
+    },
+    {
+      "name": "张鸽",
+      "phone": "",
+      "remainingLessons": 17,
+      "note": "",
+      "gender": "男",
+      "createdAt": 1788259579979,
+      "id": 13
+    },
+    {
+      "name": "杜娟",
+      "phone": "",
+      "remainingLessons": 24,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788259607838,
+      "id": 14
+    },
+    {
+      "name": "李颖睿",
+      "phone": "",
+      "remainingLessons": 21,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788259624289,
+      "id": 15
+    },
+    {
+      "name": "吕蓓",
+      "phone": "",
+      "remainingLessons": 0,
+      "note": "",
+      "gender": "女",
+      "createdAt": 1788263653837,
+      "id": 16
+    },
+    {
+      "name": "黄美云(张军)",
+      "phone": "",
+      "remainingLessons": 31,
+      "note": "",
+      "gender": "男",
+      "createdAt": 1788266240809,
+      "id": 17
+    }
+  ],
+  "sessions": [
+    {
+      "customerId": 1,
+      "start": 1788256800000,
+      "end": 1788260400000,
+      "note": "胸",
+      "status": "completed",
+      "createdAt": 1788252228256,
+      "id": 1
+    },
+    {
+      "customerId": 2,
+      "start": 1788260400000,
+      "end": 1788264000000,
+      "note": "功能",
+      "status": "completed",
+      "createdAt": 1788252237394,
+      "id": 2
+    },
+    {
+      "customerId": 2,
+      "start": 1788433200000,
+      "end": 1788436800000,
+      "note": "功能",
+      "status": "pending",
+      "createdAt": 1788261404434,
+      "id": 3
+    },
+    {
+      "customerId": 4,
+      "start": 1788321600000,
+      "end": 1788325200000,
+      "note": "背",
+      "status": "pending",
+      "createdAt": 1788261430789,
+      "id": 4
+    },
+    {
+      "customerId": 3,
+      "start": 1788325200000,
+      "end": 1788328800000,
+      "note": "腿",
+      "status": "pending",
+      "createdAt": 1788261456456,
+      "id": 5
+    },
+    {
+      "customerId": 6,
+      "start": 1788343200000,
+      "end": 1788346800000,
+      "note": "",
+      "status": "pending",
+      "createdAt": 1788261660362,
+      "id": 6
+    },
+    {
+      "customerId": 5,
+      "start": 1788350400000,
+      "end": 1788354000000,
+      "note": "腿",
+      "status": "pending",
+      "createdAt": 1788261677142,
+      "id": 7
+    },
+    {
+      "customerId": 16,
+      "start": 1788346800000,
+      "end": 1788350400000,
+      "note": "",
+      "status": "pending",
+      "createdAt": 1788263671701,
+      "id": 8
+    },
+    {
+      "customerId": 17,
+      "start": 1788328800000,
+      "end": 1788332400000,
+      "note": "",
+      "status": "pending",
+      "createdAt": 1788266262219,
+      "id": 9
+    }
+  ],
+  "settings": []
+}

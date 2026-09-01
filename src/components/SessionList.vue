@@ -51,9 +51,32 @@
             </div>
             <div v-if="s.note" class="row2">{{ s.note }}</div>
           </div>
-          <el-icon class="export-btn" title="导出ICS" @click.stop="onExport(s)">
-            <Download />
-          </el-icon>
+          <!-- 上课 / 快捷下课 / 导出ICS（逻辑与日视图完全一致） -->
+          <div class="session-actions" @click.stop>
+            <el-button
+              v-if="s.status === 'pending'"
+              class="quick-btn start-btn"
+              size="small"
+              circle
+              title="上课（复制到店通知）"
+              @click="onQuickStart(s)"
+            >
+              <el-icon><VideoPlay /></el-icon>
+            </el-button>
+            <el-button
+              v-if="s.status === 'pending'"
+              class="quick-btn finish-btn"
+              size="small"
+              circle
+              title="快捷下课（标记已完成并扣减 1 节课时）"
+              @click="onQuickComplete(s)"
+            >
+              <el-icon><Check /></el-icon>
+            </el-button>
+            <el-icon class="export-btn" title="导出ICS" @click.stop="onExport(s)">
+              <Download />
+            </el-icon>
+          </div>
         </div>
       </div>
     </template>
@@ -65,13 +88,14 @@
 import { ref, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useCustomers } from '../composables/useCustomers'
+import { useClassActions } from '../composables/useClassActions'
 import { fmtWeekday, fmtTime } from '../utils/time'
 import { buildIcs, sessionToVevent, downloadIcs, icsFileStamp } from '../utils/ics'
 
 /**
  * 排课列表视图
  * - 支持按状态、按客户筛选（客户详情页可跳转查看单个客户全部排课）
- * - 每条排课可直接导出 ICS
+ * - 待上课条目提供 上课 / 快捷下课 按钮（逻辑、特效与日视图一致），每条可导出 ICS
  */
 
 const props = defineProps({
@@ -83,6 +107,8 @@ const props = defineProps({
 const emit = defineEmits(['edit', 'update:filters'])
 
 const { getById: getCustomer } = useCustomers()
+// 上课/下课共享操作（庆祝弹窗由宿主页面渲染，实例状态共享）
+const { onQuickStart, onQuickComplete } = useClassActions()
 const local = ref({ status: props.filters.status || '', customerId: props.filters.customerId || null })
 
 // 外部筛选条件变化时同步（如从客户页跳转进入）
@@ -102,7 +128,7 @@ function onFilterChange() {
   })
 }
 
-/** 按日期倒序分组（近的在前） */
+/** 按日期分组；组内与日期均按时间从早到晚、由近到远排序 */
 const grouped = computed(() => {
   const filtered = props.sessions
     .filter((s) => {
@@ -110,7 +136,7 @@ const grouped = computed(() => {
       if (local.value.customerId && s.customerId !== local.value.customerId) return false
       return true
     })
-    .sort((a, b) => b.start - a.start)
+    .sort((a, b) => a.start - b.start)
 
   const map = new Map()
   for (const s of filtered) {
@@ -148,8 +174,21 @@ function onExport(s) {
   margin-bottom: 12px;
 }
 .session-item {
-  align-items: flex-start;
+  align-items: center;
   cursor: pointer;
+}
+/* 上课/下课/导出按钮列（按钮视觉统一在全局 .quick-btn） */
+.session-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.session-actions .quick-btn {
+  width: auto;
+}
+.session-actions .quick-btn:active {
+  transform: scale(0.94);
 }
 .export-btn {
   color: var(--cn-text-hint);

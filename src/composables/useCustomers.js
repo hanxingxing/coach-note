@@ -3,8 +3,7 @@ import { db } from '../db'
 
 /**
  * 客户管理组合式函数（模块级单例状态，多组件共享）
- * 字段：姓名 name、联系电话 phone、性别 gender（男/女，可空）、
- *      备注 note、剩余课时 remainingLessons(节)
+ * 字段：姓名 name、性别 gender（男/女）、备注 note、剩余课时 remainingLessons(节)
  */
 
 const customers = ref([])
