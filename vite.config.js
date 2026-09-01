@@ -14,9 +14,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
-        name: '课记CoachNote',
-        short_name: '课记',
-        description: '健身教练自用排课工具：客户管理、排课日历、空闲时段查询、课时统计、课程提醒',
+        name: '章章CoachNote',
+        short_name: '章章CoachNote',
+        description: '章章自用排课工具：客户管理、排课日历、空闲时段查询、课时统计、课程提醒',
         lang: 'zh-CN',
         display: 'standalone', // 全屏展示，隐藏浏览器地址栏
         orientation: 'portrait',
