@@ -33,7 +33,7 @@ export function buildClassTemplate(state, name, remaining) {
     '门店：锦业路店',
     `会员：${name}`,
     `课节：剩余 ${remaining}（菲力德)`
-  ].join('\n') + '\n'
+  ].join('\n')
 }
 
 /** 生成表情粒子：以屏幕中心为原点向四周径向扩散（方向随机，距离/时长错落） */
@@ -95,18 +95,40 @@ export function useClassActions() {
 
   /** 快捷下课：扣减课时 + 庆祝弹窗 + 复制「已下课」文本（使用扣减后最新课时） */
   async function onQuickComplete(s) {
+    const customer = getCustomer(s.customerId)
+    const name = customer?.name ?? '未知客户'
+
+    // 根据实际业务计算
+    const remaining = Math.max(
+      0,
+      (customer?.remainingLessons ?? 0) - 1
+    )
+
+    const text = buildClassTemplate(
+      '已下课',
+      name,
+      remaining
+    )
+
+    // 👇 一定要在第一个 await 前调用
+    const copyPromise = copyText(text)
+
     const result = await completeSession(s.id)
-    if (result.ok) {
-      celebrateComplete()
-      // 扣减后客户数据已刷新，取最新剩余课时
-      const customer = getCustomer(s.customerId)
-      const name = customer ? customer.name : '未知客户'
-      const remaining = customer ? customer.remainingLessons : 0
-      const ok = await copyText(buildClassTemplate('已下课', name, remaining))
-      if (!ok) ElMessage.warning('剪贴板复制失败，请手动复制下课通知')
-    } else {
+
+    if (!result.ok) {
       ElMessage.warning(result.error)
+      return
     }
+
+    const copied = await copyPromise
+
+    if (!copied) {
+      ElMessage.warning('剪贴板复制失败，请手动复制下课通知')
+      return;
+    }
+
+    celebrateComplete()
+
   }
 
   return {
