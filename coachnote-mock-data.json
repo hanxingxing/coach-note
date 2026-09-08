@@ -1,0 +1,646 @@
+{
+  "app": "课记CoachNote",
+  "version": 1,
+  "exportedAt": "2026-09-08T08:48:18.432Z",
+  "customers": [
+    {
+      "id": 1,
+      "name": "李然",
+      "gender": "男",
+      "note": "测试客户",
+      "remainingLessons": 15,
+      "createdAt": 1786265298428
+    },
+    {
+      "id": 2,
+      "name": "王可",
+      "gender": "女",
+      "note": "",
+      "remainingLessons": 8,
+      "createdAt": 1786351698428
+    },
+    {
+      "id": 3,
+      "name": "赵航",
+      "gender": "男",
+      "note": "",
+      "remainingLessons": 10,
+      "createdAt": 1786438098428
+    },
+    {
+      "id": 4,
+      "name": "陈瑜",
+      "gender": "女",
+      "note": "测试客户",
+      "remainingLessons": 4,
+      "createdAt": 1786524498428
+    },
+    {
+      "id": 5,
+      "name": "孙诺",
+      "gender": "男",
+      "note": "",
+      "remainingLessons": 6,
+      "createdAt": 1786610898428
+    },
+    {
+      "id": 6,
+      "name": "周林",
+      "gender": "女",
+      "note": "",
+      "remainingLessons": 8,
+      "createdAt": 1786697298428
+    },
+    {
+      "id": 7,
+      "name": "吴桐",
+      "gender": "男",
+      "note": "测试客户",
+      "remainingLessons": 5,
+      "createdAt": 1786783698428
+    },
+    {
+      "id": 8,
+      "name": "郑雪",
+      "gender": "女",
+      "note": "",
+      "remainingLessons": 5,
+      "createdAt": 1786870098428
+    },
+    {
+      "id": 9,
+      "name": "冯涛",
+      "gender": "男",
+      "note": "",
+      "remainingLessons": 7,
+      "createdAt": 1786956498428
+    },
+    {
+      "id": 10,
+      "name": "蒋雯",
+      "gender": "女",
+      "note": "测试客户",
+      "remainingLessons": 10,
+      "createdAt": 1787042898428
+    },
+    {
+      "id": 11,
+      "name": "韩一",
+      "gender": "男",
+      "note": "",
+      "remainingLessons": 9,
+      "createdAt": 1787129298428
+    },
+    {
+      "id": 12,
+      "name": "唐宁",
+      "gender": "女",
+      "note": "",
+      "remainingLessons": 13,
+      "createdAt": 1787215698428
+    }
+  ],
+  "sessions": [
+    {
+      "id": 1,
+      "customerId": 12,
+      "start": 1787792400000,
+      "end": 1787796000000,
+      "note": "核心、灵活",
+      "status": "completed",
+      "createdAt": 1787770800000
+    },
+    {
+      "id": 3,
+      "customerId": 3,
+      "start": 1787810400000,
+      "end": 1787814000000,
+      "note": "胸、背",
+      "status": "completed",
+      "createdAt": 1787788800000
+    },
+    {
+      "id": 2,
+      "customerId": 9,
+      "start": 1787833800000,
+      "end": 1787837400000,
+      "note": "功能、胸",
+      "status": "completed",
+      "createdAt": 1787812200000
+    },
+    {
+      "id": 5,
+      "customerId": 8,
+      "start": 1787896800000,
+      "end": 1787900400000,
+      "note": "背、核心",
+      "status": "completed",
+      "createdAt": 1787875200000
+    },
+    {
+      "id": 4,
+      "customerId": 11,
+      "start": 1787920200000,
+      "end": 1787923800000,
+      "note": "胸、腿",
+      "status": "completed",
+      "createdAt": 1787898600000
+    },
+    {
+      "id": 7,
+      "customerId": 3,
+      "start": 1787970600000,
+      "end": 1787974200000,
+      "note": "核心、肩",
+      "status": "completed",
+      "createdAt": 1787949000000
+    },
+    {
+      "id": 6,
+      "customerId": 2,
+      "start": 1787988600000,
+      "end": 1787992200000,
+      "note": "胸、胸",
+      "status": "completed",
+      "createdAt": 1787967000000
+    },
+    {
+      "id": 8,
+      "customerId": 9,
+      "start": 1788051600000,
+      "end": 1788055200000,
+      "note": "有氧、肩",
+      "status": "completed",
+      "createdAt": 1788030000000
+    },
+    {
+      "id": 9,
+      "customerId": 6,
+      "start": 1788051600000,
+      "end": 1788055200000,
+      "note": "核心、腿",
+      "status": "completed",
+      "createdAt": 1788030000000
+    },
+    {
+      "id": 10,
+      "customerId": 8,
+      "start": 1788069600000,
+      "end": 1788073200000,
+      "note": "有氧、胸",
+      "status": "completed",
+      "createdAt": 1788048000000
+    },
+    {
+      "id": 11,
+      "customerId": 10,
+      "start": 1788075000000,
+      "end": 1788078600000,
+      "note": "背、灵活",
+      "status": "completed",
+      "createdAt": 1788053400000
+    },
+    {
+      "id": 13,
+      "customerId": 6,
+      "start": 1788143400000,
+      "end": 1788147000000,
+      "note": "核心、灵活",
+      "status": "completed",
+      "createdAt": 1788121800000
+    },
+    {
+      "id": 14,
+      "customerId": 7,
+      "start": 1788161400000,
+      "end": 1788165000000,
+      "note": "有氧、功能",
+      "status": "completed",
+      "createdAt": 1788139800000
+    },
+    {
+      "id": 12,
+      "customerId": 2,
+      "start": 1788179400000,
+      "end": 1788183000000,
+      "note": "核心、有氧",
+      "status": "completed",
+      "createdAt": 1788157800000
+    },
+    {
+      "id": 17,
+      "customerId": 4,
+      "start": 1788224400000,
+      "end": 1788228000000,
+      "note": "核心、有氧",
+      "status": "completed",
+      "createdAt": 1788202800000
+    },
+    {
+      "id": 18,
+      "customerId": 7,
+      "start": 1788224400000,
+      "end": 1788228000000,
+      "note": "灵活、有氧",
+      "status": "completed",
+      "createdAt": 1788202800000
+    },
+    {
+      "id": 15,
+      "customerId": 7,
+      "start": 1788242400000,
+      "end": 1788246000000,
+      "note": "灵活、肩",
+      "status": "completed",
+      "createdAt": 1788220800000
+    },
+    {
+      "id": 16,
+      "customerId": 3,
+      "start": 1788265800000,
+      "end": 1788269400000,
+      "note": "灵活、背",
+      "status": "completed",
+      "createdAt": 1788244200000
+    },
+    {
+      "id": 19,
+      "customerId": 9,
+      "start": 1788352200000,
+      "end": 1788355800000,
+      "note": "功能、灵活",
+      "status": "completed",
+      "createdAt": 1788330600000
+    },
+    {
+      "id": 20,
+      "customerId": 2,
+      "start": 1788352200000,
+      "end": 1788355800000,
+      "note": "腿、背",
+      "status": "completed",
+      "createdAt": 1788330600000
+    },
+    {
+      "id": 22,
+      "customerId": 9,
+      "start": 1788402600000,
+      "end": 1788406200000,
+      "note": "有氧、灵活",
+      "status": "completed",
+      "createdAt": 1788381000000
+    },
+    {
+      "id": 21,
+      "customerId": 1,
+      "start": 1788433200000,
+      "end": 1788436800000,
+      "note": "背、灵活",
+      "status": "completed",
+      "createdAt": 1788411600000
+    },
+    {
+      "id": 23,
+      "customerId": 7,
+      "start": 1788501600000,
+      "end": 1788505200000,
+      "note": "胸、灵活",
+      "status": "completed",
+      "createdAt": 1788480000000
+    },
+    {
+      "id": 24,
+      "customerId": 3,
+      "start": 1788525000000,
+      "end": 1788528600000,
+      "note": "背、功能",
+      "status": "completed",
+      "createdAt": 1788503400000
+    },
+    {
+      "id": 26,
+      "customerId": 1,
+      "start": 1788570000000,
+      "end": 1788573600000,
+      "note": "腿、背",
+      "status": "completed",
+      "createdAt": 1788548400000
+    },
+    {
+      "id": 25,
+      "customerId": 7,
+      "start": 1788593400000,
+      "end": 1788597000000,
+      "note": "有氧、腿",
+      "status": "completed",
+      "createdAt": 1788571800000
+    },
+    {
+      "id": 27,
+      "customerId": 4,
+      "start": 1788598800000,
+      "end": 1788602400000,
+      "note": "核心、有氧",
+      "status": "completed",
+      "createdAt": 1788577200000
+    },
+    {
+      "id": 30,
+      "customerId": 6,
+      "start": 1788656400000,
+      "end": 1788660000000,
+      "note": "核心、灵活",
+      "status": "completed",
+      "createdAt": 1788634800000
+    },
+    {
+      "id": 28,
+      "customerId": 1,
+      "start": 1788692400000,
+      "end": 1788696000000,
+      "note": "腿、胸",
+      "status": "completed",
+      "createdAt": 1788670800000
+    },
+    {
+      "id": 29,
+      "customerId": 10,
+      "start": 1788697800000,
+      "end": 1788701400000,
+      "note": "胸、胸",
+      "status": "completed",
+      "createdAt": 1788676200000
+    },
+    {
+      "id": 32,
+      "customerId": 9,
+      "start": 1788748200000,
+      "end": 1788751800000,
+      "note": "胸、核心",
+      "status": "completed",
+      "createdAt": 1788726600000
+    },
+    {
+      "id": 33,
+      "customerId": 2,
+      "start": 1788778800000,
+      "end": 1788782400000,
+      "note": "腿、有氧",
+      "status": "completed",
+      "createdAt": 1788757200000
+    },
+    {
+      "id": 31,
+      "customerId": 7,
+      "start": 1788784200000,
+      "end": 1788787800000,
+      "note": "功能、胸",
+      "status": "completed",
+      "createdAt": 1788762600000
+    },
+    {
+      "id": 34,
+      "customerId": 7,
+      "start": 1788832800000,
+      "end": 1788836400000,
+      "note": "复盘+拉伸",
+      "status": "completed",
+      "createdAt": 1788818400000
+    },
+    {
+      "id": 35,
+      "customerId": 12,
+      "start": 1788847200000,
+      "end": 1788850800000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788832800000
+    },
+    {
+      "id": 36,
+      "customerId": 3,
+      "start": 1788854400000,
+      "end": 1788858000000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788840000000
+    },
+    {
+      "id": 37,
+      "customerId": 5,
+      "start": 1788867000000,
+      "end": 1788870600000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788852600000
+    },
+    {
+      "id": 38,
+      "customerId": 11,
+      "start": 1788917400000,
+      "end": 1788921000000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 40,
+      "customerId": 8,
+      "start": 1788922800000,
+      "end": 1788926400000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 39,
+      "customerId": 2,
+      "start": 1788937200000,
+      "end": 1788940800000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 41,
+      "customerId": 12,
+      "start": 1789034400000,
+      "end": 1789038000000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 42,
+      "customerId": 6,
+      "start": 1789104600000,
+      "end": 1789108200000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 43,
+      "customerId": 10,
+      "start": 1789120800000,
+      "end": 1789124400000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 44,
+      "customerId": 12,
+      "start": 1789128000000,
+      "end": 1789131600000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 45,
+      "customerId": 8,
+      "start": 1789182000000,
+      "end": 1789185600000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 46,
+      "customerId": 4,
+      "start": 1789214400000,
+      "end": 1789218000000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 49,
+      "customerId": 8,
+      "start": 1789268400000,
+      "end": 1789272000000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 47,
+      "customerId": 12,
+      "start": 1789293600000,
+      "end": 1789297200000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 48,
+      "customerId": 5,
+      "start": 1789293600000,
+      "end": 1789297200000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 50,
+      "customerId": 10,
+      "start": 1789349400000,
+      "end": 1789353000000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 51,
+      "customerId": 8,
+      "start": 1789369200000,
+      "end": 1789372800000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 52,
+      "customerId": 1,
+      "start": 1789450200000,
+      "end": 1789453800000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 53,
+      "customerId": 6,
+      "start": 1789466400000,
+      "end": 1789470000000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 55,
+      "customerId": 12,
+      "start": 1789527600000,
+      "end": 1789531200000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 54,
+      "customerId": 7,
+      "start": 1789542000000,
+      "end": 1789545600000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 56,
+      "customerId": 11,
+      "start": 1789542000000,
+      "end": 1789545600000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 57,
+      "customerId": 12,
+      "start": 1789628400000,
+      "end": 1789632000000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 58,
+      "customerId": 11,
+      "start": 1789628400000,
+      "end": 1789632000000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    },
+    {
+      "id": 59,
+      "customerId": 4,
+      "start": 1789709400000,
+      "end": 1789713000000,
+      "note": "待上课测试",
+      "status": "pending",
+      "createdAt": 1788857298432
+    }
+  ],
+  "settings": [
+    {
+      "key": "reminderEnabled",
+      "value": true
+    },
+    {
+      "key": "theme",
+      "value": "light"
+    }
+  ]
+}

@@ -87,7 +87,10 @@ export function useClassActions() {
   async function onQuickStart(s) {
     const customer = getCustomer(s.customerId)
     const name = customer ? customer.name : '未知客户'
-    const remaining = customer ? customer.remainingLessons : 0
+    const remaining = Math.max(
+      0,
+      (customer?.remainingLessons ?? 0) - 1
+    )
     celebrateStart()
     const ok = await copyText(buildClassTemplate('已到店', name, remaining))
     if (!ok) ElMessage.warning('剪贴板复制失败，请手动复制到店通知')

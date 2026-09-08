@@ -139,3 +139,22 @@ coach-note/
 | `npm run dev` | 本地开发 |
 | `npm run build` | 打包构建（输出 `dist/`） |
 | `npm run preview` | 本地预览构建产物 |
+| `npm run mock:data` | 生成可导入的测试数据 `coachnote-mock-data.json` |
+
+## 十、生成测试 Mock 数据
+
+如需快速填充演示数据（客户、历史已完成排课、未来待上课排课），可执行：
+
+```bash
+npm run mock:data
+```
+
+执行后会在项目根目录生成 `coachnote-mock-data.json`。
+
+导入步骤：
+
+1. 打开应用「设置」页；
+2. 进入「数据管理」点击「一键导入数据（JSON）」；
+3. 选择 `coachnote-mock-data.json` 并确认覆盖导入。
+
+说明：Mock 数据日期按“当前日期”动态生成，可直接用于月/日/列表视图、今日排课、课程记录、汇总统计等场景测试。
