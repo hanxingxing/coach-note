@@ -527,6 +527,120 @@ body {
   }
 }
 
+/* ========== 首页「在一起 XX 天」彩蛋：全屏桃心雨 + 中心「我爱你」 ========== */
+.love-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 整层可点击关闭；覆盖期间拦截底层滚动与交互 */
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  /* 更浅的奶油粉底，让下层界面若隐若现 */
+  background: radial-gradient(
+    circle at 50% 46%,
+    rgba(255, 252, 253, 0.66),
+    rgba(255, 243, 248, 0.82)
+  );
+  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: blur(9px);
+  animation: cn-fade-in 0.34s ease-out;
+}
+/* 桃心粒子：从视口上方飘落到下方，循环播放 */
+.love-heart {
+  position: absolute;
+  top: 0;
+  left: var(--x, 50vw);
+  font-size: var(--size, 20px);
+  line-height: 1;
+  pointer-events: none;
+  will-change: transform;
+  /* 进入动画前也停在视口外且透明，避免首帧闪出一排在顶部静止的桃心 */
+  transform: translate3d(0, -14vh, 0);
+  opacity: 0;
+  animation-name: love-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+.love-center {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 24px;
+  text-align: center;
+  /* 让点击落到 .love-layer 上，任意位置都能关闭 */
+  pointer-events: none;
+}
+/* 外层负责持续心跳，内层负责弹出，避免两条 transform 动画互相覆盖 */
+.love-beat {
+  animation: cn-love-beat 1.8s ease-in-out 0.7s infinite;
+}
+.love-text {
+  font-size: clamp(40px, 15vw, 68px);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 4px;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #ff9ab8, #ff5f92 55%, #ff8fb3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 6px 18px rgba(255, 111, 156, 0.35));
+  /* 缓出曲线 + 轻微回弹，起手从 0.86 淡入，避免生硬弹出 */
+  animation: cn-love-pop 0.62s cubic-bezier(0.34, 1.25, 0.5, 1) 0.04s both;
+}
+@keyframes love-fall {
+  0% {
+    transform: translate3d(0, -14vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--o, 0.9);
+  }
+  88% {
+    opacity: var(--o, 0.9);
+  }
+  100% {
+    transform: translate3d(var(--dx, 0px), 112vh, 0) rotate(calc(var(--rot, 0) * 1deg));
+    opacity: 0;
+  }
+}
+@keyframes cn-love-pop {
+  0% {
+    transform: scale(0.86);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes cn-love-beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+@keyframes cn-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 /* ========== 上课/下课快捷按钮（日视图排课块、首页今日排课列表共用） ========== */
 .quick-btn {
   position: relative;

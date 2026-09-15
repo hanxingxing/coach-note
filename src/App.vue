@@ -5,6 +5,8 @@
         <div class="title">章章 CoachNote</div>
         <div class="subtitle">{{ todayText }}</div>
       </div>
+      <!-- 首页专属：导航标题栏最右侧「在一起 XX 天」，其余页面不渲染 -->
+      <TogetherDays v-if="isDashboard" />
     </header>
 
     <main class="app-main">
@@ -17,8 +19,10 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import AppTabbar from './components/AppTabbar.vue'
+import TogetherDays from './components/TogetherDays.vue'
 import { cleanupOldData, KEEP_MONTHS } from './db'
 import { useCustomers } from './composables/useCustomers'
 import { useSessions } from './composables/useSessions'
@@ -36,6 +40,10 @@ const todayText = computed(() => {
   const now = Date.now()
   return `${fmtDate(now)} ${fmtWeekday(now)}`
 })
+
+/** 仅首页（dashboard）在导航标题栏右侧展示「在一起 XX 天」，其他页面完全不渲染 */
+const route = useRoute()
+const isDashboard = computed(() => route.name === 'dashboard')
 
 let reminder = null
 
