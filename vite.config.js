@@ -22,7 +22,7 @@ export default defineConfig({
         orientation: 'portrait',
         start_url: base,
         scope: base,
-        theme_color: '#409eff',
+        theme_color: '#ffffff', // 与 .app-header 白底一致，避免 iOS 顶端出现割裂色带
         background_color: '#ffffff',
         icons: [
           { src: `${base}icons/icon-192.png`, sizes: '192x192', type: 'image/png' },

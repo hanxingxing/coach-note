@@ -8,11 +8,18 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
     <meta name="description" content="CoachNote - 章章自用排课工具" />
-    <meta name="theme-color" content="#409eff" />
+    <!-- 与 .app-header 的白底保持一致，避免顶端出现割裂色带（原值 #409eff 为 Element 默认蓝，已废弃） -->
+    <meta name="theme-color" content="#ffffff" />
     <!-- iPhone 添加到主屏幕相关配置 -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!--
+      此处刻意不设置 apple-mobile-web-app-status-bar-style：
+      black-translucent 已被 Apple 废弃，在 iOS 26/27 的「添加到主屏幕」Web App 里会在屏幕
+      最顶端渲染一条渐变毛玻璃遮住页面顶部（WebKit Bug 317153 中 Apple 明确要求移除该键：
+      "Please remove this key, and the status bar should automatically appear in the same
+      color as the webpage"）。移除后状态栏自动取与页面一致的颜色。
+    -->
     <meta name="apple-mobile-web-app-title" content="章章要加油" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/coach-note/icons/apple-touch-icon.png" />
