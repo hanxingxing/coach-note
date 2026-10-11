@@ -1,12 +1,53 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
+import { readFileSync } from 'node:fs'
+import { execSync } from 'node:child_process'
 
 const base = '/coach-note/'
+
+/**
+ * 构建信息：构建时注入前端，在「设置」页底部展示，用于判断线上是否已经跑上新版本
+ * - __APP_VERSION__    package.json 的 version
+ * - __APP_BUILD_TIME__ UTC ISO 字符串（CI 跑在 UTC），前端按设备本地时区显示
+ * - __APP_COMMIT__     git 短哈希，和 GitHub Actions 的 commit 对得上
+ * 三项都做了兜底：拿不到 git / package.json 也不会让构建失败。
+ */
+function buildInfo() {
+  let version = '0.0.0'
+  let commit = 'unknown'
+  try {
+    version = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8')).version
+  } catch {
+    // package.json 读取失败时保留占位值
+  }
+  try {
+    commit = execSync('git rev-parse --short HEAD', {
+      stdio: ['ignore', 'pipe', 'ignore']
+    })
+      .toString()
+      .trim()
+    // 工作区有未提交改动时标记 -dirty：避免本地构建显示的哈希与线上一致、内容却不同
+    const dirty = execSync('git status --porcelain', {
+      stdio: ['ignore', 'pipe', 'ignore']
+    })
+      .toString()
+      .trim()
+    if (dirty) commit += '-dirty'
+  } catch {
+    // 无 git 环境（打包机未带 .git）时保留 unknown
+  }
+  return {
+    __APP_VERSION__: JSON.stringify(version),
+    __APP_BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+    __APP_COMMIT__: JSON.stringify(commit)
+  }
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base,
+  define: buildInfo(),
   plugins: [
     vue(),
     // PWA 配置：应用名称「课记CoachNote」，standalone 全屏展示（iPhone 添加主屏幕后隐藏地址栏）

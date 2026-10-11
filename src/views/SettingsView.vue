@@ -71,6 +71,12 @@
       </el-popconfirm>
     </div>
 
+    <!-- ========== 版本信息：判断线上是否已经跑上新版本（构建时注入，会自动变化） ========== -->
+    <div class="version">
+      <div>v{{ appVersion }} · {{ appCommit }}</div>
+      <div class="version-sub">构建于 {{ buildTimeText }}</div>
+    </div>
+
   </div>
 </template>
 
@@ -83,6 +89,7 @@ import { useSettings } from '../composables/useSettings'
 import { useNotifications } from '../composables/useNotifications'
 import { useDataTools } from '../composables/useDataTools'
 import { buildIcs, sessionToVevent, downloadIcs } from '../utils/ics'
+import { appVersion, appCommit, buildTimeText } from '../utils/version'
 
 /**
  * 设置页：课程提醒 / 数据管理（导出导入）
@@ -252,5 +259,12 @@ async function onClearAll() {
   color: #c8cdd6;
   font-size: 12px;
   margin: 16px 0;
+}
+/* 第二行构建时间：更淡一点，不抢眼但看得清 */
+.version-sub {
+  margin-top: 4px;
+  color: #d5d9e0;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
 }
 </style>
