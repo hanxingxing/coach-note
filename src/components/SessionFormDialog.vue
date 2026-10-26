@@ -47,24 +47,37 @@
       </div>
 
       <div class="form-row">
-        <el-form-item label="日期" required style="flex: 1">
-          <el-date-picker
-            v-model="form.date"
-            type="date"
-            value-format="x"
-            placeholder="选择日期"
-            style="width: 100%"
-          />
+        <el-form-item label="日期" required style="flex: 1; min-width: 0">
+          <!--
+            刻意不用 el-date-picker 的输入框：
+            手机上点输入框会先唤起软键盘，键盘把日期面板顶出可视区。
+            这里改成按钮 + 底部日期抽屉（DateSheet），全程没有输入框，不会弹键盘。
+          -->
+          <button
+            type="button"
+            class="picker-trigger"
+            :class="{ 'is-empty': !form.date }"
+            aria-haspopup="dialog"
+            :aria-expanded="dateSheetVisible"
+            @click="openDateSheet"
+          >
+            <el-icon class="picker-trigger__icon"><Calendar /></el-icon>
+            <span class="picker-trigger__text">{{ dateLabel }}</span>
+          </button>
         </el-form-item>
-        <el-form-item label="开始时间" required style="flex: 1">
-          <el-time-select
-            v-model="form.startTime"
-            start="09:00"
-            end="22:00"
-            step="00:30"
-            placeholder="开始时间"
-            style="width: 100%"
-          />
+        <el-form-item label="开始时间" required style="flex: none; width: 110px">
+          <!-- 同上：用按钮 + 底部时间抽屉，避免 select 的输入框唤起键盘 -->
+          <button
+            type="button"
+            class="picker-trigger"
+            :class="{ 'is-empty': !form.startTime }"
+            aria-haspopup="dialog"
+            :aria-expanded="timeSheetVisible"
+            @click="openTimeSheet"
+          >
+            <el-icon class="picker-trigger__icon"><Clock /></el-icon>
+            <span class="picker-trigger__text">{{ form.startTime || '选择时间' }}</span>
+          </button>
         </el-form-item>
       </div>
 
@@ -134,6 +147,10 @@
       <el-button @click="pickerVisible = false">取消</el-button>
     </template>
   </el-dialog>
+
+  <!-- 日期 / 时间选择抽屉：底部弹出，无输入框，不唤起键盘 -->
+  <DateSheet v-model="dateSheetVisible" v-model:date="form.date" />
+  <TimeSheet v-model="timeSheetVisible" v-model:value="form.startTime" />
 </template>
 
 <script setup>
@@ -142,7 +159,9 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useCustomers } from '../composables/useCustomers'
 import { useSessions } from '../composables/useSessions'
-import { startOfDay, fmtTime } from '../utils/time'
+import DateSheet from './DateSheet.vue'
+import TimeSheet from './TimeSheet.vue'
+import { startOfDay, fmtTime, fmtWeekday } from '../utils/time'
 import { buildIcs, sessionToVevent, downloadIcs, icsFileStamp } from '../utils/ics'
 
 /** 上课时间范围：早 09:00 — 晚 22:00（排课不允许超出） */
@@ -169,6 +188,9 @@ const saving = ref(false)
 const isEdit = ref(false)
 /** 更换客户弹窗显隐（编辑排课时使用） */
 const pickerVisible = ref(false)
+/** 日期 / 时间选择抽屉显隐 */
+const dateSheetVisible = ref(false)
+const timeSheetVisible = ref(false)
 const form = reactive({
   customerId: null,
   date: null,
@@ -179,6 +201,17 @@ const form = reactive({
 
 /** 当前绑定客户 */
 const currentCustomer = computed(() => (form.customerId ? getCustomer(form.customerId) : null))
+
+/** 日期按钮文案：10月26日 周一（跨年时带上年份） */
+const dateLabel = computed(() => {
+  if (!form.date) return '选择日期'
+  const ts = Number(form.date)
+  if (!Number.isFinite(ts)) return '选择日期'
+  const d = new Date(ts)
+  const md = `${d.getMonth() + 1}月${d.getDate()}日`
+  const year = d.getFullYear() === new Date().getFullYear() ? '' : `${d.getFullYear()}年`
+  return `${year}${md} ${fmtWeekday(ts)}`
+})
 
 /** 新增模式展示全部客户；编辑模式默认仅展示绑定客户（绑定客户不存在时回退展示全部） */
 const showAllCustomerTags = computed(() => !isEdit.value || !currentCustomer.value)
@@ -222,6 +255,16 @@ function goCustomers() {
   router.push('/customers')
 }
 
+/** 打开日期抽屉（收起键盘、层级由 BottomSheet 统一处理） */
+function openDateSheet() {
+  dateSheetVisible.value = true
+}
+
+/** 打开开始时间抽屉 */
+function openTimeSheet() {
+  timeSheetVisible.value = true
+}
+
 const customerRemaining = computed(() => {
   const c = getCustomer(form.customerId)
   return c ? c.remainingLessons : 0
@@ -251,14 +294,14 @@ watch(visible, (v) => emit('update:modelValue', v))
 
 /**
  * 新建排课默认开始时间：当前时间往后最近的半小时整点（如 14:37 → 15:00，14:12 → 14:30）
- * 恰好整点则顺延半小时；超出可排课范围 [09:00, 21:30] 时回退到 09:00
+ * 恰好整点则顺延半小时；超出可排课范围 [09:00, 21:00] 时回退到 09:00
  */
 function nextHalfHour() {
   const d = new Date()
   let next = Math.ceil((d.getHours() * 60 + d.getMinutes()) / 30) * 30
   if (next === d.getHours() * 60 + d.getMinutes()) next += 30
   if (next < 9 * 60) next = 9 * 60
-  if (next > 21 * 60 + 30) next = 9 * 60
+  if (next > 21 * 60) next = 9 * 60
   const h = Math.floor(next / 60)
   const m = next % 60
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
@@ -411,6 +454,51 @@ function onExportIcs() {
 .form-row.stacked .ctag {
   padding: 10px 18px;
   font-size: 15px;
+}
+/* 日期 / 时间按钮：外观对齐 Element 大号输入框，点开底部抽屉（不唤起键盘） */
+.picker-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 40px;
+  padding: 0 16px;
+  margin: 0;
+  border: none;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: var(--el-border-radius-base, 4px);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--el-border-color, #dcdfe6) inset;
+  color: var(--el-text-color-regular, #606266);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.picker-trigger:active {
+  box-shadow: 0 0 0 1px var(--cn-primary) inset;
+}
+.picker-trigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--cn-primary) inset, 0 0 0 3px rgba(255, 111, 156, 0.18);
+}
+.picker-trigger__icon {
+  flex: none;
+  font-size: 15px;
+  color: var(--cn-primary);
+}
+.picker-trigger__text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.picker-trigger.is-empty .picker-trigger__text {
+  color: var(--el-text-color-placeholder, #a8abb2);
 }
 .time-hint {
   font-size: 12px;

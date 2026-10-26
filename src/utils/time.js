@@ -60,6 +60,25 @@ export function parseHM(str) {
   return h * 60 + m
 }
 
+/**
+ * 生成 "HH:mm" 时间片列表（含首尾）
+ * @param {string} start 起始时间，如 09:00
+ * @param {string} end 结束时间，如 21:30
+ * @param {number} [step=30] 步长（分钟）
+ * @returns {string[]}
+ */
+export function buildTimeSlots(start, end, step = 30) {
+  const from = parseHM(start)
+  const to = parseHM(end)
+  const slots = []
+  for (let m = from; m <= to; m += step) {
+    const h = String(Math.floor(m / 60)).padStart(2, '0')
+    const min = String(m % 60).padStart(2, '0')
+    slots.push(`${h}:${min}`)
+  }
+  return slots
+}
+
 /** 当天 0 点 + 分钟数 → 时间戳 */
 export function tsFromDayMinutes(dayStart, minutes) {
   return dayStart + minutes * MINUTE_MS

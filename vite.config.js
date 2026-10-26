@@ -3,8 +3,34 @@ import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 import { readFileSync } from 'node:fs'
 import { execSync } from 'node:child_process'
+import os from 'node:os'
 
 const base = '/coach-note/'
+
+/**
+ * 开发服务器额外打印「手机访问」地址。
+ * Vite 自带的 Network 地址取的是第一个非内网 IPv4，本机第一个是 Hyper-V 的
+ * vEthernet（192.168.208.1），手机根本路由不到；这里跳过虚拟网卡再打印真实局域网地址。
+ */
+function printLanUrl() {
+  return {
+    name: 'coachnote-print-lan-url',
+    configureServer(server) {
+      server.httpServer?.once('listening', () => {
+        const port = server.httpServer?.address()?.port || server.config.server.port
+        const virtual = /vEthernet|Hyper-V|WSL|VMware|VirtualBox|Loopback|Tailscale|ZeroTier/i
+        const addresses = Object.entries(os.networkInterfaces())
+          .filter(([name]) => !virtual.test(name))
+          .flatMap(([, list]) => list || [])
+          .filter((item) => item.family === 'IPv4' && !item.internal)
+          .map((item) => item.address)
+        for (const ip of addresses) {
+          server.config.logger.info(`  ➜  手机访问: http://${ip}:${port}${base}`)
+        }
+      })
+    }
+  }
+}
 
 /**
  * 构建信息：构建时注入前端，在「设置」页底部展示，用于判断线上是否已经跑上新版本
@@ -50,6 +76,7 @@ export default defineConfig({
   define: buildInfo(),
   plugins: [
     vue(),
+    printLanUrl(),
     // PWA 配置：应用名称「课记CoachNote」，standalone 全屏展示（iPhone 添加主屏幕后隐藏地址栏）
     VitePWA({
       registerType: 'autoUpdate',
@@ -83,7 +110,10 @@ export default defineConfig({
     })
   ],
   server: {
-    host: true
+    host: true,
+    // 5173 落在本机 Windows/Hyper-V 的保留端口段（5087-5186），bind 会报 EACCES；
+    // 5200 在该段之外，端口被占用时 Vite 仍会自动顺延到下一个可用端口
+    port: 5200
   },
   build: {
     // Element Plus 全量引入体积较大，提高警告阈值避免噪音（本地工具应用可接受）
